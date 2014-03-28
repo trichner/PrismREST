@@ -1,5 +1,6 @@
 package ch.k42.bukkit.statrest.rest;
 
+import ch.k42.bukkit.statrest.model.EntryVO;
 import ch.k42.bukkit.statrest.model.EnumsVO;
 import ch.k42.bukkit.statrest.db.PrismDAO;
 import org.jboss.logging.Logger;
@@ -7,6 +8,7 @@ import org.jboss.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,9 +17,9 @@ import java.util.Set;
 
 @Path("/")
 @RequestScoped
-public class PlayerStatRESTService {
+public class PrismRESTService {
 
-    private Logger LOG = Logger.getLogger(PlayerStatRESTService.class);
+    private Logger LOG = Logger.getLogger(PrismRESTService.class);
 
     @Inject
     private PrismDAO dao;
@@ -81,6 +83,21 @@ public class PlayerStatRESTService {
             return dao.getPvpKills();
         }else if (type.equals("pve")){
             return dao.getPveKills();
+        }
+        throw new WebApplicationException(new IllegalArgumentException("type invalid, possible values 'pvp','pve' but was "+type));
+    }
+
+    @Path("/scoreboard/kills")
+    @GET
+    @Produces("application/json")
+    public List<EntryVO> getScoreboardKills(@QueryParam("type") String type,@DefaultValue("10") @QueryParam("limit") int limit){
+        LOG.debug("getKills");
+        if(type==null){
+            return dao.getScoreboardKills(limit);
+        }else if(type.equals("pvp")){
+            return dao.getScoreboardKillsPvp(limit);
+        }else if (type.equals("pve")){
+            return dao.getScoreboardKillsPve(limit);
         }
         throw new WebApplicationException(new IllegalArgumentException("type invalid, possible values 'pvp','pve' but was "+type));
     }

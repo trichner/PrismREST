@@ -1,12 +1,12 @@
 package ch.k42.bukkit.statrest.db;
 
+import ch.k42.bukkit.statrest.minions.ConfigFile;
+import ch.k42.bukkit.statrest.model.EntryVO;
 import org.jboss.logging.Logger;
 
 import javax.faces.bean.ApplicationScoped;
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Thomas on 27.03.14.
@@ -14,7 +14,7 @@ import java.util.Set;
 @ApplicationScoped
 public class PrismDAO {
 
-    private Logger LOG = Logger.getLogger(PrismDAO.class);
+    private Logger logger = Logger.getLogger(PrismDAO.class);
 
     private String userName = "root";
     private String password = "1234";
@@ -36,10 +36,15 @@ public class PrismDAO {
 
     //@Inject
     public PrismDAO() {
+        this.dbname = ConfigFile.getProperty("dbname",dbname);
+        this.hostname = ConfigFile.getProperty("hostname",hostname);
+        this.port = ConfigFile.getProperty("dbport",port);
+        this.userName = ConfigFile.getProperty("dbusername",userName);
+        this.password = ConfigFile.getProperty("dbpassword",password);
         try {
             this.connect();
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
     }
 
@@ -50,20 +55,20 @@ public class PrismDAO {
 
         if (this.dbtype.equals("mysql")) {
             String url =getURL();
-            LOG.debug("Connecting to: "+url);
+            logger.debug("Connecting to: " + url);
             this.connection = DriverManager.getConnection(url,connectionProps);
         } else{
-            LOG.error("Unsupported DB type");
+            logger.error("Unsupported DB type");
         }
-        LOG.debug("Connected to database");
+        logger.debug("Connected to database");
     }
 
     public Set<String> getPlayers(){
         try {
             StringBuilder squery = new StringBuilder(buildSelectWhere("player"));
             squery.append(" GROUP BY ").append(Column.PLAYER.name);
-            LOG.debug(squery);
-            ResultSet result = executeQuery(squery.toString());
+            logger.debug(squery);
+            ResultSet result = executePreparedStatement(squery.toString());
             Set<String> players = new HashSet<>();
             while (result.next()){
                 String name = result.getString(1);
@@ -72,7 +77,7 @@ public class PrismDAO {
             }
             return players;
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return new HashSet<>();
     }
@@ -80,9 +85,9 @@ public class PrismDAO {
     public int getDeaths(){
         try {
             String squery = buildSelectWhere("count(*)",Column.ACTION_TYPE);
-            return  getCount(executeQuery(squery,ActionType.PLAYER_DEATH.name));
+            return  getCount(executePreparedStatement(squery, ActionType.PLAYER_DEATH.name));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -90,9 +95,9 @@ public class PrismDAO {
     public int getDeaths(String type){
         try {
             String squery = buildSelectWhere("count(*)",Column.ACTION_TYPE,Column.DATA);
-            return  getCount(executeQuery(squery,ActionType.PLAYER_DEATH.name,type));
+            return  getCount(executePreparedStatement(squery, ActionType.PLAYER_DEATH.name, type));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -100,9 +105,9 @@ public class PrismDAO {
     public int getDeathsForPlayer(String player){
         try {
             String squery = buildSelectWhere("count(*)", Column.PLAYER, Column.ACTION_TYPE);
-            return  getCount(executeQuery(squery,player,ActionType.PLAYER_DEATH.name));
+            return  getCount(executePreparedStatement(squery, player, ActionType.PLAYER_DEATH.name));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -110,9 +115,9 @@ public class PrismDAO {
     public int getDeathsForPlayerByType(String player,String type){
         try {
             String squery = buildSelectWhere("count(*)", Column.PLAYER, Column.ACTION_TYPE, Column.DATA);
-            return  getCount(executeQuery(squery,player,ActionType.PLAYER_DEATH.name,type));
+            return  getCount(executePreparedStatement(squery, player, ActionType.PLAYER_DEATH.name, type));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -122,9 +127,9 @@ public class PrismDAO {
     public int getPveKillsForPlayer(String player){
         try {
             String squery    = buildSelectWhere("count(*)", Column.PLAYER, Column.ACTION_TYPE);
-            return  getCount(executeQuery(squery,player,ActionType.PLAYER_KILL.name));
+            return  getCount(executePreparedStatement(squery, player, ActionType.PLAYER_KILL.name));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -136,9 +141,9 @@ public class PrismDAO {
     public int getPveKills(){
         try {
             String squery    = buildSelectWhere("count(*)", Column.ACTION_TYPE);
-            return  getCount(executeQuery(squery,ActionType.PLAYER_KILL.name));
+            return  getCount(executePreparedStatement(squery, ActionType.PLAYER_KILL.name));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -146,9 +151,9 @@ public class PrismDAO {
     public int getPvpKills(){
         try {
             String squery    = buildSelectWhere("count(*)",Column.ACTION_TYPE) + " AND " + Column.DATA + " LIKE ?";
-            return  getCount(executeQuery(squery,ActionType.PLAYER_DEATH.name,DeathType.PVP_PREFIX.type + "%"));
+            return  getCount(executePreparedStatement(squery, ActionType.PLAYER_DEATH.name, DeathType.PVP_PREFIX.type + "%"));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
@@ -160,19 +165,78 @@ public class PrismDAO {
     public int getPvpKillsForPlayer(String player){
         try {
             String squery    = buildSelectWhere("count(*)", Column.DATA, Column.ACTION_TYPE);
-            return  getCount(executeQuery(squery,DeathType.PVP_PREFIX.type + player,ActionType.PLAYER_DEATH.name));
+            return  getCount(executePreparedStatement(squery, DeathType.PVP_PREFIX.type + player, ActionType.PLAYER_DEATH.name));
         } catch (SQLException e) {
-            LOG.error(e);
+            logger.error(e);
         }
         return 0;
     }
 
-    private ResultSet executeQuery(String squery,String... args) throws SQLException {
-        LOG.debug("Starting query: " + squery);
+    public List<EntryVO> getScoreboardKillsPve(int limit){
+        String squery = buildSelectWhere("player,count(*)",Column.ACTION_TYPE);
+        squery += " GROUP BY player ORDER BY count(*) DESC LIMIT " + limit;
+        try {
+            ResultSet result = executePreparedStatement(squery,ActionType.PLAYER_KILL.name);
+            List<EntryVO> scoreboard = new ArrayList<>(limit);
+            while (result.next()){
+                scoreboard.add(new EntryVO(result.getString(1),result.getInt(2)));
+            }
+            return scoreboard;
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return new ArrayList<>(0);
+    }
+
+    public List<EntryVO> getScoreboardKillsPvp(int limit){
+        String squery = buildSelectWhere("data,count(*)",Column.ACTION_TYPE);
+        squery += " AND " + Column.DATA + " LIKE ? GROUP BY data ORDER BY count(*) DESC LIMIT " + limit;
+        try {
+            ResultSet result = executePreparedStatement(squery,ActionType.PLAYER_DEATH.name,DeathType.PVP_PREFIX.type+"%");
+            List<EntryVO> scoreboard = new ArrayList<>(limit);
+            while (result.next()){
+                String[] split = result.getString(1).split(":");
+                if(split.length<=0) continue;
+                scoreboard.add(new EntryVO(split[1], result.getInt(2)));
+            }
+            return scoreboard;
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return new ArrayList<>(0);
+    }
+
+    public List<EntryVO> getScoreboardKills(int limit){
+        List<EntryVO> pve = getScoreboardKillsPve(limit);
+        List<EntryVO> pvp = getScoreboardKillsPvp(limit);
+        Map<String,EntryVO> scoreboard = new HashMap<>();
+        for(EntryVO e : pve){
+            scoreboard.put(e.getName(),e);
+        }
+        for(EntryVO e : pvp){
+            if(scoreboard.containsKey(e.getName())){
+                scoreboard.get(e.getName()).addValue(e.getValue());
+            }else {
+                scoreboard.put(e.getName(),e);
+            }
+        }
+
+        List<EntryVO> scores = new ArrayList<>(scoreboard.values());
+        Collections.sort(scores,new Comparator<EntryVO>() {
+            @Override
+            public int compare(EntryVO o1, EntryVO o2) {
+                return o2.getValue()-o1.getValue();
+            }
+        });
+        return scores.subList(0,limit);
+    }
+
+    private ResultSet executePreparedStatement(String squery, String... args) throws SQLException {
         PreparedStatement query = connection.prepareStatement(squery);
         for(int i=1;i<=args.length;i++){
             query.setString(i, args[i-1]);
         }
+        logger.debug("Query: " + query);
         return query.executeQuery();
     }
 
