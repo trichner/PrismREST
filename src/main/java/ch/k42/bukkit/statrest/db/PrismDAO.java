@@ -34,7 +34,6 @@ public class PrismDAO {
         this.password = password;
     }
 
-    //@Inject
     public PrismDAO() {
         this.dbname = ConfigFile.getProperty("dbname",dbname);
         this.hostname = ConfigFile.getProperty("hostname",hostname);
@@ -172,11 +171,53 @@ public class PrismDAO {
         return 0;
     }
 
-    public List<EntryVO> getScoreboardKillsPve(int limit){
+
+    public Integer getBlockBreakForPlayer(String player) {
+        try {
+            String squery    = buildSelectWhere("count(*)", Column.ACTION_TYPE,Column.PLAYER);
+            return  getCount(executePreparedStatement(squery,ActionType.BLOCK_BREAK.name,player));
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return 0;
+    }
+
+
+    public int getBlockBreak() {
+        try {
+            String squery    = buildSelectWhere("count(*)", Column.ACTION_TYPE);
+            return  getCount(executePreparedStatement(squery,ActionType.BLOCK_BREAK.name));
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return 0;
+    }
+
+    public Integer getBlockPlaceForPlayer(String player) {
+        try {
+            String squery    = buildSelectWhere("count(*)", Column.ACTION_TYPE,Column.PLAYER);
+            return  getCount(executePreparedStatement(squery,ActionType.BLOCK_PLACE.name,player));
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return 0;
+    }
+
+    public int getBlockPlace() {
+        try {
+            String squery    = buildSelectWhere("count(*)", Column.ACTION_TYPE);
+            return  getCount(executePreparedStatement(squery,ActionType.BLOCK_PLACE.name));
+        } catch (SQLException e) {
+            logger.error(e);
+        }
+        return 0;
+    }
+
+    public List<EntryVO> getScoreboardForAction(int limit,ActionType action){
         String squery = buildSelectWhere("player,count(*)",Column.ACTION_TYPE);
         squery += " GROUP BY player ORDER BY count(*) DESC LIMIT " + limit;
         try {
-            ResultSet result = executePreparedStatement(squery,ActionType.PLAYER_KILL.name);
+            ResultSet result = executePreparedStatement(squery,action.name);
             List<EntryVO> scoreboard = new ArrayList<>(limit);
             while (result.next()){
                 scoreboard.add(new EntryVO(result.getString(1),result.getInt(2)));
@@ -186,6 +227,10 @@ public class PrismDAO {
             logger.error(e);
         }
         return new ArrayList<>(0);
+    }
+
+    public List<EntryVO> getScoreboardKillsPve(int limit){
+        return getScoreboardForAction(limit,ActionType.PLAYER_KILL);
     }
 
     public List<EntryVO> getScoreboardKillsPvp(int limit){

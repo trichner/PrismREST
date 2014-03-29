@@ -1,5 +1,6 @@
 package ch.k42.bukkit.statrest.rest;
 
+import ch.k42.bukkit.statrest.db.ActionType;
 import ch.k42.bukkit.statrest.model.EntryVO;
 import ch.k42.bukkit.statrest.model.EnumsVO;
 import ch.k42.bukkit.statrest.db.PrismDAO;
@@ -75,7 +76,7 @@ public class PrismRESTService {
     @Path("/kills")
     @GET
     @Produces("application/json")
-    public Integer getKillsForPlayer(@QueryParam("type") String type){
+    public Integer getKills(@QueryParam("type") String type){
         LOG.debug("getKills");
         if(type==null){
             return dao.getKills();
@@ -102,6 +103,22 @@ public class PrismRESTService {
         throw new WebApplicationException(new IllegalArgumentException("type invalid, possible values 'pvp','pve' but was "+type));
     }
 
+    @Path("/scoreboard/block-place")
+    @GET
+    @Produces("application/json")
+    public List<EntryVO> getScoreboardBlockPlace(@DefaultValue("10") @QueryParam("limit") int limit){
+        LOG.debug("getKills");
+        return dao.getScoreboardForAction(limit, ActionType.BLOCK_PLACE);
+    }
+
+    @Path("/scoreboard/block-break")
+    @GET
+    @Produces("application/json")
+    public List<EntryVO> getScoreboardBlockBreak(@DefaultValue("10") @QueryParam("limit") int limit){
+        LOG.debug("getKills");
+        return dao.getScoreboardForAction(limit,ActionType.BLOCK_BREAK);
+    }
+
     @Path("/enum")
     @GET
     @Produces("application/json")
@@ -110,21 +127,37 @@ public class PrismRESTService {
         return new EnumsVO();
     }
 
-//    @Path("/block/break/{username: [a-zA-Z_0-9]+}")
-//    @GET
-//    @Produces("application/json")
-//    public Integer getBlockBreakForPlayer(@PathParam("username") String username){
-//        LOG.debug("getDeathsForPlayer: " + username);
-//        return //dao.getDeathsForPlayer(username);
-//    }
-//
-//    @Path("/block/place/{username: [a-zA-Z_0-9]+}")
-//    @GET
-//    @Produces("application/json")
-//    public Integer getBlockPlaceForPlayer(@PathParam("username") String username){
-//        LOG.debug("getDeathsForPlayer: " + username);
-//        return //dao.getDeathsForPlayer(username);
-//    }
+    @Path("/block/break/{username: [a-zA-Z_0-9]+}")
+    @GET
+    @Produces("application/json")
+    public Integer getBlockBreakForPlayer(@PathParam("username") String username){
+        LOG.debug("blockbreak: " + username);
+        return dao.getBlockBreakForPlayer(username);
+    }
+
+    @Path("/block/break")
+    @GET
+    @Produces("application/json")
+    public Integer getBlockBreak(){
+        LOG.debug("getDeathsForPlayer: ");
+        return dao.getBlockBreak();
+    }
+
+    @Path("/block/place/{username: [a-zA-Z_0-9]+}")
+    @GET
+    @Produces("application/json")
+    public Integer getBlockPlaceForPlayer(@PathParam("username") String username){
+        LOG.debug("bloackplace: " + username);
+        return dao.getBlockPlaceForPlayer(username);
+    }
+
+    @Path("/block/place")
+    @GET
+    @Produces("application/json")
+    public Integer getBlockPlace(){
+        LOG.debug("bloackplace: ");
+        return dao.getBlockPlace();
+    }
 
 
 }
