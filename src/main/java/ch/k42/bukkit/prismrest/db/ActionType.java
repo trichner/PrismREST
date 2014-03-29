@@ -1,4 +1,4 @@
-package ch.k42.bukkit.statrest.db;
+package ch.k42.bukkit.prismrest.db;
 
 /**
  * Created by Thomas on 27.03.14.

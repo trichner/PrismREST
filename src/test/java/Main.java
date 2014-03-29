@@ -1,5 +1,5 @@
-import ch.k42.bukkit.statrest.db.PrismDAO;
-import ch.k42.bukkit.statrest.model.EntryVO;
+import ch.k42.bukkit.prismrest.db.PrismDAO;
+import ch.k42.bukkit.prismrest.model.EntryVO;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -1,7 +1,7 @@
-package ch.k42.bukkit.statrest.db;
+package ch.k42.bukkit.prismrest.db;
 
-import ch.k42.bukkit.statrest.minions.ConfigFile;
-import ch.k42.bukkit.statrest.model.EntryVO;
+import ch.k42.bukkit.prismrest.minions.ConfigFile;
+import ch.k42.bukkit.prismrest.model.EntryVO;
 import org.jboss.logging.Logger;
 
 import javax.faces.bean.ApplicationScoped;

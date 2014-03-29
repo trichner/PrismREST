@@ -1,7 +1,7 @@
-package ch.k42.bukkit.statrest.model;
+package ch.k42.bukkit.prismrest.model;
 
-import ch.k42.bukkit.statrest.db.ActionType;
-import ch.k42.bukkit.statrest.db.DeathType;
+import ch.k42.bukkit.prismrest.db.ActionType;
+import ch.k42.bukkit.prismrest.db.DeathType;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;

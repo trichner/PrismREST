@@ -1,4 +1,4 @@
-package ch.k42.bukkit.statrest.rest;
+package ch.k42.bukkit.prismrest.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

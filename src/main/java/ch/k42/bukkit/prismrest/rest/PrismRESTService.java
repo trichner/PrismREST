@@ -1,9 +1,9 @@
-package ch.k42.bukkit.statrest.rest;
+package ch.k42.bukkit.prismrest.rest;
 
-import ch.k42.bukkit.statrest.db.ActionType;
-import ch.k42.bukkit.statrest.model.EntryVO;
-import ch.k42.bukkit.statrest.model.EnumsVO;
-import ch.k42.bukkit.statrest.db.PrismDAO;
+import ch.k42.bukkit.prismrest.db.ActionType;
+import ch.k42.bukkit.prismrest.model.EntryVO;
+import ch.k42.bukkit.prismrest.model.EnumsVO;
+import ch.k42.bukkit.prismrest.db.PrismDAO;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;

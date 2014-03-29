@@ -1,4 +1,4 @@
-package ch.k42.bukkit.statrest.minions;
+package ch.k42.bukkit.prismrest.minions;
 
 import org.jboss.logging.Logger;
 

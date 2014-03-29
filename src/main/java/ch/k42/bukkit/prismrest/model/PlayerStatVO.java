@@ -1,4 +1,4 @@
-package ch.k42.bukkit.statrest.model;
+package ch.k42.bukkit.prismrest.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

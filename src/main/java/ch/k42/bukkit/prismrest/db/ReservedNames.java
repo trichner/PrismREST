@@ -1,4 +1,4 @@
-package ch.k42.bukkit.statrest.db;
+package ch.k42.bukkit.prismrest.db;
 
 import java.util.Collections;
 import java.util.HashSet;
