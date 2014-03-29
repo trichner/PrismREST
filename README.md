@@ -3,6 +3,27 @@ PrismREST
 
 PrismREST provides a simple REST interface to the Database of the Bukkit Plugin ['Prism'](http://discover-prism.com/).
 
+## How to deploy
+
+In order to deploy the *.war package you need a JEE Application Server i.e. [JBoss](https://www.jboss.org/jbossas/downloads/) or [Tomcat](https://tomcat.apache.org/download-80.cgi). 
+
+
+####For JBoss: 
+
+1. Download & extract JBoss, from now on this folder is called 'JBOSS_HOME'
+2. run 'standalone.sh', use 'screen' to run it in background
+3. copy the 'PrismREST.war' into JBOSS_HOME/standalone/deployments/
+4. JBoss should now auto-deploy the application, if the file 'PrismREST.war.deployed' gets created, JBoss succeded
+5. If you run it the first time, ['prismrest.properties'](https://github.com/trichner/PrismREST/blob/master/README.md#config-file) will be generated in JBOSS_HOME/bin/
+6. edit the config according to your Prism 'config.yml'
+7. redeploy the application
+8. Profit
+
+#####Hints:
+- JBoss has a webinterface at [localhost:9990](http://localhost:9990), it helps managing your deployments
+- if you create the config file before deploying, you won't have to redeploy
+- if you run into problems set the log level to 'DEBUG', edit your JBOSS_HOME/standalone/configuration/standalone.xml and set 'root-logger' to 'DEBUG'
+
 ## REST API
 
 Base URL: http://example.com/PrismREST/v1
