@@ -6,7 +6,7 @@ import javax.ws.rs.core.Application;
 /**
  * Created by Thomas on 26.03.14.
  */
-@ApplicationPath("/rest")
+@ApplicationPath("/v1")
 public class JaxRsActivator extends Application {
     //bootstraps RESTeasy
 }

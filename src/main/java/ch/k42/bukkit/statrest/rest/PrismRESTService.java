@@ -127,7 +127,7 @@ public class PrismRESTService {
         return new EnumsVO();
     }
 
-    @Path("/block/break/{username: [a-zA-Z_0-9]+}")
+    @Path("/block-break/{username: [a-zA-Z_0-9]+}")
     @GET
     @Produces("application/json")
     public Integer getBlockBreakForPlayer(@PathParam("username") String username){
@@ -135,15 +135,15 @@ public class PrismRESTService {
         return dao.getBlockBreakForPlayer(username);
     }
 
-    @Path("/block/break")
+    @Path("/block-break")
     @GET
     @Produces("application/json")
     public Integer getBlockBreak(){
-        LOG.debug("getDeathsForPlayer: ");
+        LOG.debug("block break: ");
         return dao.getBlockBreak();
     }
 
-    @Path("/block/place/{username: [a-zA-Z_0-9]+}")
+    @Path("/block-place/{username: [a-zA-Z_0-9]+}")
     @GET
     @Produces("application/json")
     public Integer getBlockPlaceForPlayer(@PathParam("username") String username){
@@ -151,7 +151,7 @@ public class PrismRESTService {
         return dao.getBlockPlaceForPlayer(username);
     }
 
-    @Path("/block/place")
+    @Path("/block-place")
     @GET
     @Produces("application/json")
     public Integer getBlockPlace(){
